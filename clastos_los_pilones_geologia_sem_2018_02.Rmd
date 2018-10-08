@@ -1,6 +1,8 @@
 ---
 title: "Descriptives and tests of coarse grained samples Geology, GEO-112, Geography Degree, UASD"
-output: pdf_document
+output:
+  # pdf_document
+  html_document
 header-includes:
   \usepackage{pdflscape}
   \newcommand{\blandscape}{\begin{landscape}}
@@ -212,41 +214,41 @@ ttests.nrlf.s <- map(
 ttests.nrlf.s
 ```
 
-### Inferences. Correlations by axis
+<!-- ### Inferences. Correlations by axis -->
 
-```{r, tidy=F}
-# a-axis
-cor.a <- map(
-  rownames(respnamesc),
-  ~cor.test(
-    sort(samples[samples$responsable.abbv==respnamesc[.x,1],'a']),
-    sort(samples[samples$responsable.abbv==respnamesc[.x,2],'a'])
-  )
-) %>% setNames(rownames(respnamesc))
-cor.a
-# Correlation b-axis
-cor.b <- map(
-  rownames(respnamesc),
-  ~cor.test(
-    sort(samples[samples$responsable.abbv==respnamesc[.x,1],'b']),
-    sort(samples[samples$responsable.abbv==respnamesc[.x,2],'b'])
-  )
-) %>% setNames(rownames(respnamesc))
-cor.b
-# Correlation c-axis
-cor.c <- map(
-  rownames(respnamesc),
-  ~cor.test(
-    sort(samples[samples$responsable.abbv==respnamesc[.x,1],'c']),
-    sort(samples[samples$responsable.abbv==respnamesc[.x,2],'c'])
-  )
-) %>% setNames(rownames(respnamesc))
-cor.c
-```
+<!-- ```{r, tidy=F} -->
+<!-- # a-axis -->
+<!-- cor.a <- map( -->
+<!--   rownames(respnamesc), -->
+<!--   ~cor.test( -->
+<!--     sort(samples[samples$responsable.abbv==respnamesc[.x,1],'a']), -->
+<!--     sort(samples[samples$responsable.abbv==respnamesc[.x,2],'a']) -->
+<!--   ) -->
+<!-- ) %>% setNames(rownames(respnamesc)) -->
+<!-- cor.a -->
+<!-- # Correlation b-axis -->
+<!-- cor.b <- map( -->
+<!--   rownames(respnamesc), -->
+<!--   ~cor.test( -->
+<!--     sort(samples[samples$responsable.abbv==respnamesc[.x,1],'b']), -->
+<!--     sort(samples[samples$responsable.abbv==respnamesc[.x,2],'b']) -->
+<!--   ) -->
+<!-- ) %>% setNames(rownames(respnamesc)) -->
+<!-- cor.b -->
+<!-- # Correlation c-axis -->
+<!-- cor.c <- map( -->
+<!--   rownames(respnamesc), -->
+<!--   ~cor.test( -->
+<!--     sort(samples[samples$responsable.abbv==respnamesc[.x,1],'c']), -->
+<!--     sort(samples[samples$responsable.abbv==respnamesc[.x,2],'c']) -->
+<!--   ) -->
+<!-- ) %>% setNames(rownames(respnamesc)) -->
+<!-- cor.c -->
+<!-- ``` -->
 
 ### Plots
 
-```{r respon.dens, tidy=FALSE, echo=TRUE, results='hide', fig.show='hide'}
+```{r respon.dens, tidy=FALSE, echo=TRUE, results='hide', fig.width=11, fig.show='show'}
 # Density plots
 respon.dens <- samples %>%
   filter(!grepl('Ocoa', `nombre de muestra`)) %>% 
@@ -278,7 +280,7 @@ respon.dens
 
 &nbsp;
 
-```{r respon.bp, tidy=FALSE, echo=TRUE, results='hide', fig.show='hide'}
+```{r respon.bp, tidy=FALSE, echo=TRUE, results='hide', fig.width=11, fig.show='show'}
 # Box-plots
 respon.bp <- samples %>%
   filter(!grepl('Ocoa', `nombre de muestra`)) %>% 
