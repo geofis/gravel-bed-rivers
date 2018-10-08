@@ -1,0 +1,320 @@
+---
+title: "Descriptives and tests of coarse grained samples Geology, GEO-112, Geography Degree, UASD"
+output: pdf_document
+header-includes:
+  \usepackage{pdflscape}
+  \newcommand{\blandscape}{\begin{landscape}}
+  \newcommand{\elandscape}{\end{landscape}}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages
+
+```{r, tidy=F}
+library(readODS)
+library(sp)
+library(tidyverse)
+library(plotKML)
+```
+
+## Set the working directory, read the data, prepare the data
+
+```{r, tidy=F}
+#Working directory
+wd <- '/home/jr/Documentos/clases_UASD/sem201802/datos_campo/'
+setwd(wd)
+
+#Spatial object
+fcoords <- list.files(wd, '*coord.ods')
+coords <- read_ods(
+  fcoords,
+  col_types = c('text', 'text', 'numeric', 'numeric', 'text')
+)
+str(coords)
+coords[,c(3,4)] <- sapply(coords[,c(3,4)], as.numeric)
+str(coords)
+
+#Samples
+fsamples <- list.files(wd, '*samples.ods')
+samples <- read_ods(fsamples, range = 'A1:G1140')
+str(samples)
+samples[,c(5,6,7)] <- sapply(samples[,c(5,6,7)], as.numeric)
+str(samples)
+# Two letters abbreviation for responsible name
+samples$responsable.abbv <- gsub(
+  '\\b(\\pL)\\pL{2,}|.','\\U\\1',
+  iconv(samples$responsable, to='ASCII//TRANSLIT'),
+  perl = TRUE)
+# Responsible.sample field (e.g. ET.M1)
+samples$resp.m <- paste(
+  samples$responsable.abbv,
+  samples$`nombre de muestra`, sep = '.')
+```
+
+## Descriptive statistics and inferences
+
+### Descriptive statistics
+
+```{r, tidy=F}
+sapply(
+  unique(samples$responsable),
+  function(x)
+    psych::describe(samples[samples$responsable==x,c(5,6,7)]),
+  simplify = F
+)
+sapply(
+  unique(samples$responsable),
+  function(x)
+    sapply(
+      unique(samples[samples$responsable==x,'nombre de muestra']),
+      function(y)
+        psych::describe(
+          samples[samples$responsable==x&samples$`nombre de muestra`==y,c(5,6,7)]
+          ),
+      simplify = F
+    )
+)
+```
+
+### Inferences. Combinations of responsibles-samples
+
+```{r, tidy=FALSE}
+comb <- as.data.frame(
+  gtools::combinations(
+    length(unique(samples$resp.m)),
+    r= 2,
+    unique(samples$resp.m)
+  )
+)
+head(comb)
+```
+
+### Inferences. t-Tests between responsibles-samples (all against all)
+The smaller the p-value the better the result
+
+```{r, tidy=FALSE}
+rownames(comb) <- paste(comb[,1], comb[,2], sep = ' - ')
+ttests <- t(
+  sapply(
+    rownames(comb),
+    function(x)
+      sapply(c('a','b','c'),
+             function(y)
+               t.test(
+                 samples[samples$resp.m==comb[x,1], y],
+                 samples[samples$resp.m==comb[x,2], y]
+                 )$p.value,
+             simplify = T,
+             USE.NAMES = T
+             )
+    )
+)
+ttests
+```
+
+### Inferences. Number and relative frequencies of statistically significant differences between samples by responsibles (all against all)
+- The higher the TRUE relative frequencies the better the result
+
+```{r, tidy=F}
+respnames <- unique(
+  samples$responsable.abbv)[
+    nchar(unique(samples$responsable.abbv))==2
+    ]#This excludes Ocoa samples
+ttests.nrlf <- map(
+  respnames,
+  ~ttests %>%
+    as.data.frame() %>%
+    rownames_to_column('m1 - m2') %>%
+    mutate_if(is.numeric, funs(.<=0.05)) %>%
+    filter(grepl(.x, `m1 - m2`)) %>% 
+    filter(!grepl('Ocoa', `m1 - m2`)) %>% 
+    gather(variable, value, -`m1 - m2`) %>% 
+    dplyr::select(variable, value) %>% 
+    group_by(variable, value) %>% 
+    dplyr::summarise(freq=n()) %>%
+    dplyr::add_tally(freq) %>% 
+    mutate(proportion=round(freq/n*100,2))
+) %>% set_names(respnames)
+ttests.nrlf
+```
+
+### Inferences. Number and relative frequencies of statistically significant differences pairwise by responsible
+- The higher the TRUE relative frequencies the better the result
+
+```{r, tidy=F}
+respnamesc <- as.data.frame(gtools::combinations(length(respnames), r=2, respnames))
+rownames(respnamesc) <- paste(
+  respnamesc$V1,
+  '-',
+  respnamesc$V2,
+  '=',
+  respnamesc$V2,
+  '-',
+  respnamesc$V1
+)
+ttests.nrlf.p <- map(
+  rownames(respnamesc),
+  ~ttests %>%
+    as.data.frame() %>%
+    rownames_to_column('m1 - m2') %>%
+    mutate_if(is.numeric, funs(.<=0.05)) %>%
+    filter(
+      grepl(
+        paste0(
+          '^',
+          respnamesc[.x,1],
+          '\\.M. - ',
+          respnamesc[.x,2],
+          '.*$|^',
+          respnamesc[.x,2],
+          '\\.M. - ',
+          respnamesc[.x,1],
+          '.*$'),
+        `m1 - m2`)) %>% 
+    gather(variable, value, -`m1 - m2`) %>% 
+    dplyr::select(variable, value) %>% 
+    group_by(variable, value) %>% 
+    dplyr::summarise(freq=n()) %>%
+    dplyr::add_tally(freq) %>% 
+    mutate(proportion=round(freq/n*100,2))
+) %>% setNames(rownames(respnamesc))
+ttests.nrlf.p
+```
+
+### Inferences. Statistically significant differences between samples of the same person
+- The higher the TRUE relative frequencies the better the result
+
+```{r, tidy=FALSE}
+ttests.nrlf.s <- map(
+  respnames,
+  ~ttests %>%
+    as.data.frame() %>%
+    rownames_to_column('m1 - m2') %>%
+    mutate_if(is.numeric, funs(.<=0.05)) %>%
+    filter(grepl(
+      paste0(
+          '^',
+          .x,
+          '\\.M. - ',
+          .x,
+          '.*$')
+      , `m1 - m2`)) %>% 
+    gather(variable, value, -`m1 - m2`) %>% 
+    dplyr::select(variable, value) %>% 
+    group_by(variable, value) %>% 
+    dplyr::summarise(freq=n()) %>%
+    dplyr::add_tally(freq) %>% 
+    mutate(proportion=round(freq/n*100,2))
+) %>% set_names(respnames)
+ttests.nrlf.s
+```
+
+### Inferences. Correlations by axis
+
+```{r, tidy=F}
+# a-axis
+cor.a <- map(
+  rownames(respnamesc),
+  ~cor.test(
+    sort(samples[samples$responsable.abbv==respnamesc[.x,1],'a']),
+    sort(samples[samples$responsable.abbv==respnamesc[.x,2],'a'])
+  )
+) %>% setNames(rownames(respnamesc))
+cor.a
+# Correlation b-axis
+cor.b <- map(
+  rownames(respnamesc),
+  ~cor.test(
+    sort(samples[samples$responsable.abbv==respnamesc[.x,1],'b']),
+    sort(samples[samples$responsable.abbv==respnamesc[.x,2],'b'])
+  )
+) %>% setNames(rownames(respnamesc))
+cor.b
+# Correlation c-axis
+cor.c <- map(
+  rownames(respnamesc),
+  ~cor.test(
+    sort(samples[samples$responsable.abbv==respnamesc[.x,1],'c']),
+    sort(samples[samples$responsable.abbv==respnamesc[.x,2],'c'])
+  )
+) %>% setNames(rownames(respnamesc))
+cor.c
+```
+
+### Plots
+
+```{r respon.dens, tidy=FALSE, echo=TRUE, results='hide', fig.show='hide'}
+# Density plots
+respon.dens <- samples %>%
+  filter(!grepl('Ocoa', `nombre de muestra`)) %>% 
+  select(responsible=responsable, a, b, c) %>% 
+  gather(axis, `value (in mm)`, -responsible) %>% 
+  ggplot(aes(x=`value (in mm)`, colour = responsible)) +
+  geom_line(alpha = 0.75, stat = 'density', size = 2, fill = 'gray95') +
+  facet_grid(~axis, scales = 'free_x') +
+  theme(
+    text = element_text(size = 18),
+    axis.text.x=element_text(size = 18, angle = 90, hjust = 1, vjust = 0.5),
+    panel.background = element_rect(fill = 'white', colour = 'black'),
+    panel.grid.major = element_line(colour = "grey", linetype = "dashed", size = 0.25),
+    strip.background = element_rect(colour = "black", fill = "black"),
+    strip.text.x = element_text(colour = "white", face = "bold")
+  )
+respon.dens
+```
+
+\newpage
+\newgeometry{margin=0.1in, top=0.1in, headheight=0.0in, footskip=0.2in, includehead, includefoot}
+\blandscape
+```{r respon.dens2, echo=FALSE, tidy=FALSE, out.width='0.95\\paperheight', fig.width=11, fig.height=8, fig.align='center'}
+# Box-Plots of species abundances (and transformations) by species
+respon.dens
+```
+\elandscape
+\restoregeometry
+
+&nbsp;
+
+```{r respon.bp, tidy=FALSE, echo=TRUE, results='hide', fig.show='hide'}
+# Box-plots
+respon.bp <- samples %>%
+  filter(!grepl('Ocoa', `nombre de muestra`)) %>% 
+  select(responsible=responsable, a, b, c) %>% 
+  gather(axis, `value (in mm)`, -responsible) %>% 
+  ggplot(aes(x=responsible, y=`value (in mm)`, fill = responsible)) +
+  geom_boxplot(alpha = 0.3) +
+  facet_grid(~axis, scales = 'free_x') +
+  theme(
+    text = element_text(size = 18),
+    axis.text.x=element_text(size = 18, angle = 90, hjust = 1, vjust = 0.5),
+    panel.background = element_rect(fill = 'white', colour = 'black'),
+    panel.grid.major = element_line(colour = "grey", linetype = "dashed", size = 0.25),
+    strip.background = element_rect(colour = "black", fill = "black"),
+    strip.text.x = element_text(colour = "white", face = "bold")
+  )
+respon.bp
+```
+
+\newpage
+\newgeometry{margin=0.1in, top=0.1in, headheight=0.0in, footskip=0.2in, includehead, includefoot}
+\blandscape
+```{r respon.bp2, echo=FALSE, tidy=FALSE, out.width='0.95\\paperheight', fig.width=11, fig.height=8, fig.align='center'}
+# Box-Plots of species abundances (and transformations) by species
+respon.bp
+```
+\elandscape
+\restoregeometry
+
+
+### Maps
+
+```{r, tidy=FALSE}
+# coords.sp <- coords
+# coordinates(coords.sp) <- ~x+y
+# proj4string(coords.sp) <- CRS("+init=epsg:32619")
+# plotKML(coords.sp, 'kml')
+# spTransform(coords.sp, CRS("+init=epsg:4326"))
+```
