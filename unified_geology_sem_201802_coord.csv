@@ -1,0 +1,61 @@
+responsable,nombre de muestra,x,y,datum,nombre temporal
+Ernesto Santana,M1,342496.286,2029593.406,ESPG:32619,1ra
+Ernesto Santana,M2,342569.8,2029390.689,ESPG:32619,2da
+Ernesto Santana,M3,342757.28,2029201.855,ESPG:32619,3ra
+Ernesto Santana,M4,342503.963,2030225.116,ESPG:32619,4ta
+Ernesto Santana,M5,342627.348,2030510.219,ESPG:32619,5ta
+Ernesto Santana,M6,342521.187,2030710.071,ESPG:32619,6ta
+Ernesto Santana,M7,342426.642,2030851.622,ESPG:32619,7ma
+Edel Tejeda,M1,342436.58,2029653.62,ESPG:32619,Muestra #1
+Edel Tejeda,M2,342447.3,2029641.68,ESPG:32619,Muestra #2
+Edel Tejeda,M3,342472.03,2029610.24,ESPG:32619,Muestra #3
+Edel Tejeda,M4,342504.97,2029577.95,ESPG:32619,Muestra #4
+Edel Tejeda,M5,342580.61,2029389.57,ESPG:32619,Muestra #5
+Edel Tejeda,M6,342595.74,2029363.15,ESPG:32619,Muestra #6
+Edel Tejeda,M7,342605.37,2029346.97,ESPG:32619,Muestra #7
+Álvaro Taveras,M1,342436.58,2029653.62,ESPG:32619,Muestra #1
+Álvaro Taveras,M2,342447.3,2029641.68,ESPG:32619,Muestra #2
+Álvaro Taveras,M3,342472.03,2029610.24,ESPG:32619,Muestra #3
+Álvaro Taveras,M4,342504.97,2029577.95,ESPG:32619,Muestra #4
+Álvaro Taveras,M5,342580.61,2029389.57,ESPG:32619,Muestra #5
+Álvaro Taveras,M6,342595.74,2029363.15,ESPG:32619,Muestra #6
+Álvaro Taveras,M7,342605.37,2029346.97,ESPG:32619,Muestra #7
+Lewis Cueto,M1,342491.182,2029581.41,ESPG:32619,Muestra 1
+Lewis Cueto,M2,342601.238,2029385.51,ESPG:32619,Muestra 2
+Lewis Cueto,M3,342648.888,2029314.31,ESPG:32619,Muestra 3
+Lewis Cueto,M4,342757.402,2029191.86,ESPG:32619,Muestra 4
+Lewis Cueto,M5,342752.313,2029145.02,ESPG:32619,Muestra 5
+Lewis Cueto,M6,342762.869,2028985.12,ESPG:32619,Muestra 6
+Lewis Cueto,M7,342742.534,2028939.09,ESPG:32619,Muestra 7
+Miqueas Ventura,M1,342501.29,2029587.18,ESPG:32619,Muestra 1
+Miqueas Ventura,M2,342577.47,2029378.82,ESPG:32619,Muestra 2
+Miqueas Ventura,M3,342759.48,2029189.68,ESPG:32619,Muestra 3
+Miqueas Ventura,M4,342508.44,2030242.61,ESPG:32619,Muestra 4
+Miqueas Ventura,M5,342630.24,2030500.6,ESPG:32619,Muestra 5
+Miqueas Ventura,M6,342511.81,2030718.88,ESPG:32619,Muestra 6
+Miqueas Ventura,M7,342426.17,2030842.08,ESPG:32619,Muestra 7
+Kesia Ferreras,M1,,,ESPG:32619,AguasArriba1
+Kesia Ferreras,M2,,,ESPG:32619,AguasArriba2
+Kesia Ferreras,M3,,,ESPG:32619,AguasArriba3
+Kesia Ferreras,M4,,,ESPG:32619,AguasAbajo1
+Kesia Ferreras,M5,,,ESPG:32619,AguasAbajo2
+Kesia Ferreras,M6,,,ESPG:32619,AguasAbajo3
+Kesia Ferreras,M7,,,ESPG:32619,AguasAbajo4
+Daniel Beltrés,M1,342479.515,2029574.072,ESPG:32619,Muestra #1
+Daniel Beltrés,M2,342597.735,2029379.855,ESPG:32619,Muestra #2
+Daniel Beltrés,M3,342648.035,2029322.502,ESPG:32619,Muestra #3
+Daniel Beltrés,M4,342757.183,2029195.164,ESPG:32619,Muestra #4
+Daniel Beltrés,M5,342753.03,2029137.602,ESPG:32619,Muestra #5
+Daniel Beltrés,M6,342757.032,2028979.312,ESPG:32619,Muestra #6
+Daniel Beltrés,M7,342740.994,2029379.855,ESPG:32619,Muestra #7
+Jhohansel Santana,M1,,,ESPG:32619,
+Jhohansel Santana,M2,,,ESPG:32619,
+Jhohansel Santana,M3,,,ESPG:32619,
+Jhohansel Santana,M4,,,ESPG:32619,
+Jhohansel Santana,M5,,,ESPG:32619,
+Jhohansel Santana,M6,,,ESPG:32619,
+Jhohansel Santana,M7,,,ESPG:32619,
+Ernesto Santana y Miqueas Ventura,Ocoa,341579.008,2052597.5,ESPG:32619,Muestra 8
+Edel Tejeda y Álvaro Taveras,Ocoa,341534.19,2052581.38,ESPG:32619,Muestra #8
+Kesia Ferreras y Jhohansel Santana,Ocoa,,,ESPG:32619,Ultima
+Daniel Beltrés y Lewis Cueto,Ocoa,341669.312,2052643.74,ESPG:32619,Muestra #8

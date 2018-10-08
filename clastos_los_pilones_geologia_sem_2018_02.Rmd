@@ -1,8 +1,8 @@
 ---
 title: "Descriptives and tests of coarse grained samples Geology, GEO-112, Geography Degree, UASD"
 output:
-  # pdf_document
-  html_document
+  pdf_document
+  # html_document
 header-includes:
   \usepackage{pdflscape}
   \newcommand{\blandscape}{\begin{landscape}}
@@ -248,7 +248,7 @@ ttests.nrlf.s
 
 ### Plots
 
-```{r respon.dens, tidy=FALSE, echo=TRUE, results='hide', fig.width=11, fig.show='show'}
+```{r respon.dens, tidy=FALSE, echo=TRUE, results='hide', fig.width=11, fig.show='hide'}
 # Density plots
 respon.dens <- samples %>%
   filter(!grepl('Ocoa', `nombre de muestra`)) %>% 
@@ -280,7 +280,7 @@ respon.dens
 
 &nbsp;
 
-```{r respon.bp, tidy=FALSE, echo=TRUE, results='hide', fig.width=11, fig.show='show'}
+```{r respon.bp, tidy=FALSE, echo=TRUE, results='hide', fig.width=11, fig.show='hide'}
 # Box-plots
 respon.bp <- samples %>%
   filter(!grepl('Ocoa', `nombre de muestra`)) %>% 
