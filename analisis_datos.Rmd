@@ -59,19 +59,22 @@ devtools::source_url(
 invisible(
   sapply(
     c(
-      "Pearson" = "pearson",
-      "Kendall" = "kendall",
-      "Spearman" = "spearman"
+      "pearson",
+      "kendall",
+      "spearman"
     ),
     function(x) {
-      # dev.new()
+      dev.new()
       p <- pairs(na.omit(d.kf[,c('a','b','c')]),
             cex.labels = 2,
             lower.panel = panel.smooth,
             upper.panel = panel.cor,
             diag.panel = panel.hist,
             method = x,
-            main = paste0(names(x), " Correlation Matrix"))
+            main = paste0(
+              toupper(substr(x, 1, 1)),
+              substr(x, 2, nchar(x)),
+              " Correlation Matrix"))
       print(p)
     }
   )
