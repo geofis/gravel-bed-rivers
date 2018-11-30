@@ -64,7 +64,7 @@ invisible(
       "spearman"
     ),
     function(x) {
-      dev.new()
+      # dev.new()
       p <- pairs(na.omit(d.kf[,c('a','b','c')]),
             cex.labels = 2,
             lower.panel = panel.smooth,
