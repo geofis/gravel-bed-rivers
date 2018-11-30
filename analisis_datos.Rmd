@@ -1,0 +1,105 @@
+---
+title: "Analisis de datos"
+output:
+  pdf_document
+  # html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r analisis, tidy=FALSE, message=FALSE, warning=FALSE,}
+#Lectura de datos
+d.env <- read.csv(
+  paste0(
+    'http://geografiafisica.org/sem201801/geo112/',
+    'datos_campo_201802/datos/unified_geology_sem_201802_coord.csv'
+  )
+)
+d <- read.csv(
+  paste0(
+    'http://geografiafisica.org/sem201801/geo112/',
+    'datos_campo_201802/datos/unified_geology_sem_201802_samples.csv'
+  )
+)
+#Datos de Kesia Ferreras
+d.kf <- d[grep('kesia', d$responsable, ignore.case = T),]
+
+#Supuesto de normalidad
+(normalidad <- sapply(d.kf[,c('a','b','c')], shapiro.test))#Ninguna proviene de dist. normal
+
+#Correlacion
+(correl <- sapply(
+  c("pearson", "kendall", "spearman"),
+  function(x)
+  cor(
+    d.kf[,c('a','b','c')],
+    use = 'pairwise.complete.obs',
+    method = x
+  ),
+  simplify = F
+))
+
+#Prueba de asociacion (paquete psych)
+(pruebasocpsych <- psych::corr.test(
+  d.kf[,c('a','b','c')],
+  use = 'complete'
+))
+print(pruebasocpsych, digits = 10)
+
+#Panel de correlaciones
+devtools::source_url(
+  paste0('https://raw.githubusercontent.com/JoeyBernhardt/',
+         'NumericalEcology/master/panelutils.R'
+  )
+)
+
+invisible(
+  sapply(
+    c(
+      "Pearson" = "pearson",
+      "Kendall" = "kendall",
+      "Spearman" = "spearman"
+    ),
+    function(x) {
+      # dev.new()
+      p <- pairs(na.omit(d.kf[,c('a','b','c')]),
+            cex.labels = 2,
+            lower.panel = panel.smooth,
+            upper.panel = panel.cor,
+            diag.panel = panel.hist,
+            method = x,
+            main = paste0(names(x), " Correlation Matrix"))
+      print(p)
+    }
+  )
+)
+
+
+#Prueba de asociacion (paquete stats)
+combinaciones <- as.data.frame(
+  t(
+    combn(c('a','b','c'), 2)
+  )
+)
+
+combinaciones$nombre <- paste0(
+  combinaciones[,1],
+  ' y ',
+  combinaciones[,2]
+)
+
+(pruebasocstats <- sapply(
+  combinaciones$nombre,
+  function(x) {
+    cor.test(
+      d.kf[,as.character(combinaciones[combinaciones$nombre==x, 1])],
+      d.kf[,as.character(combinaciones[combinaciones$nombre==x, 2])]
+    )
+  },
+  simplify = F
+))
+
+```

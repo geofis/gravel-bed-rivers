@@ -26,7 +26,7 @@ library(plotKML)
 
 ```{r, tidy=F}
 #Working directory
-wd <- '/home/jr/Documentos/clases_UASD/sem201802/datos_campo/'
+wd <- '/home/jr/Documentos/proyecto_FONDOCyT/varios/pasar_a_drive/R_ensayos_historicos/clastos_los_pilones_geologia_sem_2018_02/'
 setwd(wd)
 
 #Spatial object
